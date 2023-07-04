@@ -25,67 +25,34 @@ class MoneyTransferTest {
     }
 
     @Test
-    void transferFromCardToCard1000() {
+    void transferValid() {
         var firstCardNumber = getOneCardNumber();
         var twoCardNumber = getTwoCardNumber();
         var oneCardBalance = dashboardPage.getCardBalance(0);
         var twoCardBalance = dashboardPage.getCardBalance(1);
-        var amount = 1000;
+        var amount = DataHelper.generateValidAmount(oneCardBalance);
         var expectedBalanceOneCard = oneCardBalance - amount;
         var expectedBalanceTwoCard = twoCardBalance + amount;
         var transferPages = dashboardPage.selectCardToTransfer(twoCardNumber);
-        dashboardPage = transferPages.setRefill(1000,getOneCardNumber());
+        dashboardPage = transferPages.setRefill(amount,getOneCardNumber());
         var actualBalanceOneCard = dashboardPage.getCardBalance(0);
         var actualBalanceTwoCard = dashboardPage.getCardBalance(1);
         assertEquals(expectedBalanceOneCard, actualBalanceOneCard);
         assertEquals(expectedBalanceTwoCard ,actualBalanceTwoCard);
     }
     @Test
-    void transferFromCardToCard10000() {
+    void transferInvalid() {
         var firstCardNumber = getOneCardNumber();
         var twoCardNumber = getTwoCardNumber();
         var oneCardBalance = dashboardPage.getCardBalance(0);
         var twoCardBalance = dashboardPage.getCardBalance(1);
-        var amount = 10000;
-        var expectedBalanceOneCard = oneCardBalance - amount;
-        var expectedBalanceTwoCard = twoCardBalance + amount;
-        var transferPages = dashboardPage.selectCardToTransfer(twoCardNumber);
-        dashboardPage = transferPages.setRefill(10000,getOneCardNumber());
+        var amount = DataHelper.generateInvalidAmount(twoCardBalance);
+        var transferPages = dashboardPage.selectCardToTransfer(getOneCardNumber());
+        transferPages.refill(amount,getTwoCardNumber());
+        transferPages.setErrorNotification("Ошибка");
         var actualBalanceOneCard = dashboardPage.getCardBalance(0);
         var actualBalanceTwoCard = dashboardPage.getCardBalance(1);
-        assertEquals(expectedBalanceOneCard, actualBalanceOneCard);
-        assertEquals(expectedBalanceTwoCard ,actualBalanceTwoCard);
-    }
-    @Test
-    void transferFromCardToCard999() {
-        var firstCardNumber = getOneCardNumber();
-        var twoCardNumber = getTwoCardNumber();
-        var oneCardBalance = dashboardPage.getCardBalance(0);
-        var twoCardBalance = dashboardPage.getCardBalance(1);
-        var amount = 999;
-        var expectedBalanceOneCard = oneCardBalance - amount;
-        var expectedBalanceTwoCard = twoCardBalance + amount;
-        var transferPages = dashboardPage.selectCardToTransfer(twoCardNumber);
-        dashboardPage = transferPages.setRefill(999,getOneCardNumber());
-        var actualBalanceOneCard = dashboardPage.getCardBalance(0);
-        var actualBalanceTwoCard = dashboardPage.getCardBalance(1);
-        assertEquals(expectedBalanceOneCard, actualBalanceOneCard);
-        assertEquals(expectedBalanceTwoCard ,actualBalanceTwoCard);
-    }
-    @Test
-    void transferFromCardToCard10001() {
-        var firstCardNumber = getOneCardNumber();
-        var twoCardNumber = getTwoCardNumber();
-        var oneCardBalance = dashboardPage.getCardBalance(0);
-        var twoCardBalance = dashboardPage.getCardBalance(1);
-        var amount = 10001;
-        var expectedBalanceOneCard = oneCardBalance - amount;
-        var expectedBalanceTwoCard = twoCardBalance + amount;
-        var transferPages = dashboardPage.selectCardToTransfer(twoCardNumber);
-        dashboardPage = transferPages.setRefill(10001,getOneCardNumber());
-        var actualBalanceOneCard = dashboardPage.getCardBalance(0);
-        var actualBalanceTwoCard = dashboardPage.getCardBalance(1);
-        assertEquals(expectedBalanceOneCard, actualBalanceOneCard);
-        assertEquals(expectedBalanceTwoCard ,actualBalanceTwoCard);
+        assertEquals(oneCardBalance, actualBalanceOneCard);
+        assertEquals(twoCardBalance, actualBalanceTwoCard);
     }
 }
